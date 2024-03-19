@@ -49,6 +49,24 @@ export class AppConfigService {
     };
   }
 
+  get seedConfig() {
+    return {
+      enable: this.getBoolean('SEED_ON_STARTUP') || false,
+      ownerEmail: this.getString('OWNER_EMAIL'),
+      ownerPhone: this.getString('OWNER_PHONE'),
+      ownerNAme: this.getString('OWNER_NAME'),
+      ownerPassword: this.getString('OWNER_PASSWORD'),
+    };
+  }
+
+  get authConfig() {
+    return {
+      bcryptSaltRounds: this.getNumber('BCRYPT_SALT_ROUNDS') || 10,
+      jwtSecret: this.getString('JWT_SECRET') || 'SuperDuperSecret111$',
+      jwtExpiresIn: this.getString('JWT_EXPIRES_IN') || '60d',
+    };
+  }
+
   get databaseConfig() {
     return {
       databaseUrl: this.getString('DATABASE_URL'),

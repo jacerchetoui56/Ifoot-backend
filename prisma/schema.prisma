@@ -13,9 +13,292 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       String  @id @default(uuid())
-  email    String  @unique
-  name     String?
-  password String
+model PermissionScope {
+  id          String       @id @default(uuid())
+  name        String
+  description String
+  code        String       @unique
+  permissions Permission[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
+
+model Permission {
+  id          String         @id @default(uuid())
+  name        String
+  roles       Role[]
+  description String
+  code        String         @unique
+  protection  ProtectionEnum @default(NORMAL)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  scope   PermissionScope? @relation(fields: [scopeId], references: [id])
+  scopeId String?
+}
+
+enum ProtectionEnum {
+  NORMAL
+  PROTECTED
+  SYSTEM
+}
+
+model Role {
+  id           String         @id @default(uuid())
+  name         String
+  protection   ProtectionEnum @default(NORMAL)
+  permisstions Permission[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  users        User[]
+}
+
+model User {
+  id                String            @id @default(uuid())
+  email             String            @unique
+  password          String
+  role              Role?             @relation(fields: [roleId], references: [id])
+  roleId            String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  teams             Team[]
+  admin             Admin?
+  player            Player?
+  trainer           Trainer?
+  chatGroupsCreated chatGroup[]
+  userToChatGroup   UserToChatGroup[]
+  messages          Message[]
+}
+
+enum ProfileType {
+  ADMIN
+  TRAINER
+  USER
+}
+
+model Player {
+  id              String             @id @default(uuid())
+  type            ProfileType
+  firstName       String
+  lastName        String
+  phone           String?
+  address         String?
+  city            String?
+  birthdate       DateTime?
+  user            User               @relation(fields: [userId], references: [id])
+  userId          String             @unique
+  team            Team               @relation(fields: [teamId], references: [id])
+  teamId          String
+  category        Category           @relation(fields: [categoryId], references: [id])
+  categoryId      String
+  categoryGroup   CategoryGroup?     @relation(fields: [categoryGroupId], references: [id])
+  categoryGroupId String?
+  evaluations     PlayerEvaluation[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+}
+
+model Admin {
+  id        String      @id @default(uuid())
+  type      ProfileType
+  firstName String
+  lastName  String
+  phone     String?
+  address   String?
+  city      String?
+  birthdate DateTime?
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String      @unique
+  teams     Team[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Trainer {
+  id                  String               @id @default(uuid())
+  type                ProfileType
+  firstName           String
+  lastName            String
+  phone               String?
+  address             String?
+  city                String?
+  birthdate           DateTime?
+  user                User                 @relation(fields: [userId], references: [id])
+  userId              String               @unique
+  team                Team                 @relation(fields: [teamId], references: [id])
+  teamId              String
+  categories          Category[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  notedPresences      Presence[]
+  trainingSessions    TrainingSession[]
+  notedEvaluations    PlayerEvaluation[]
+  evaluationTemplates EvaluationTemplate[]
+}
+
+model Team {
+  id             String          @id @default(uuid())
+  name           String
+  description    String
+  createdBy      User            @relation(fields: [createById], references: [id])
+  createById     String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  categories     Category[]
+  categoryGroups CategoryGroup[]
+  players        Player[]
+  trainers       Trainer[]
+  admins         Admin[]
+}
+
+model Category {
+  id            String          @id @default(uuid())
+  name          String
+  teamId        String
+  team          Team            @relation(fields: [teamId], references: [id])
+  trainers      Trainer[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  categoryGroup CategoryGroup[]
+  players       Player[]
+}
+
+model CategoryGroup {
+  id               String            @id @default(uuid())
+  name             String
+  categoryId       String
+  category         Category          @relation(fields: [categoryId], references: [id])
+  team             Team              @relation(fields: [teamId], references: [id])
+  teamId           String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  trainingSessions TrainingSession[]
+  players          Player[]
+}
+
+enum PresenceStatus {
+  PRESENT
+  ABSENT
+  ABSENT_WITH_EXCUSE
+  LATE
+}
+
+model Presence {
+  id                String          @id @default(uuid())
+  status            PresenceStatus  @default(ABSENT)
+  date              DateTime
+  trainer           Trainer         @relation(fields: [trainerId], references: [id])
+  trainerId         String
+  trainingSession   TrainingSession @relation(fields: [trainingSessionId], references: [id])
+  trainingSessionId String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model TrainingSession {
+  id                String             @id @default(uuid())
+  date              DateTime
+  trainer           Trainer            @relation(fields: [trainerId], references: [id])
+  trainerId         String
+  categoryGroup     CategoryGroup      @relation(fields: [categoryGroupId], references: [id])
+  categoryGroupId   String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  presences         Presence[]
+  playerEvaluations PlayerEvaluation[]
+}
+
+model PlayerEvaluation {
+  id                String          @id @default(uuid())
+  skill             String
+  mark              Int //this will be a mark 0 to 20
+  player            Player          @relation(fields: [playerId], references: [id])
+  playerId          String
+  trainer           Trainer         @relation(fields: [trainerId], references: [id])
+  trainerId         String
+  trainingSession   TrainingSession @relation(fields: [trainingSessionId], references: [id])
+  trainingSessionId String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model EvaluationTemplateItem {
+  id                   String             @id @default(uuid())
+  name                 String
+  description          String
+  evaluationTemplate   EvaluationTemplate @relation(fields: [evaluationTemplateId], references: [id])
+  evaluationTemplateId String
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+}
+
+model EvaluationTemplate {
+  id                      String                   @id @default(uuid())
+  name                    String
+  trainer                 Trainer                  @relation(fields: [createdBy], references: [id])
+  createdBy               String
+  evaluationTemplateItems EvaluationTemplateItem[]
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+}
+
+model chatGroup {
+  id        String @id @default(uuid())
+  name      String
+  user      User   @relation(fields: [createdBy], references: [id])
+  createdBy String
+
+  picture         String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  messages        Message[]
+  UserToChatGroup UserToChatGroup[]
+}
+
+enum UserToChatGroupAccess {
+  READ
+  READ_WRITE
+}
+
+model UserToChatGroup {
+  id          String                @id @default(uuid())
+  user        User                  @relation(fields: [userId], references: [id])
+  userId      String
+  chatGroup   chatGroup             @relation(fields: [chatGroupId], references: [id])
+  chatGroupId String
+  access      UserToChatGroupAccess @default(READ)
+  joinedAt    DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  DOCUMENT
+  POLL
+}
+
+model Message {
+  id          String      @id @default(uuid())
+  type        MessageType
+  content     String?
+  imageUrl    String?
+  videoUrl    String?
+  documentUrl String?
+  // poll        String? // TODO: new models to make
+
+  chatGroup   chatGroup? @relation(fields: [chatGroupId], references: [id])
+  chatGroupId String?
+
+  sender   User?   @relation(fields: [senderId], references: [id])
+  senderId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// TODO
+// -----------------------------
+// ---- programme annuel
+// -----------------------------
