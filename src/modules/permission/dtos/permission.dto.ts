@@ -6,9 +6,10 @@ export class PermissionDto {
   id: string;
   name: string;
   description: string;
-  code: PermissionCodeEnum;
-  scope: ScopeCodeEnum;
-  protection: PermissionProtectionEnum;
+  code: PermissionCodeEnum | string;
+  protection?: PermissionProtectionEnum;
   createdAt: Date;
   updatedAt: Date;
+  scopeId: string;
+  scope?: ScopeCodeEnum | string;
 }

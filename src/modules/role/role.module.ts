@@ -3,7 +3,7 @@ import RoleService from './services/role.service';
 
 @Module({
   providers: [RoleService],
-  exports: [],
+  exports: [RoleService],
   controllers: [],
   imports: [],
 })

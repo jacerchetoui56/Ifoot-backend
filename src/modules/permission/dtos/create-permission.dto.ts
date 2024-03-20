@@ -1,5 +1,12 @@
-import { IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { PermissionCodeEnum } from '../enums/permission-code.enum';
+import { PermissionProtectionEnum } from '../enums/permission-protection.enum';
 
 export class CreatePermissionDto {
   @IsString()
@@ -12,6 +19,9 @@ export class CreatePermissionDto {
 
   @IsEnum(PermissionCodeEnum)
   code: PermissionCodeEnum;
+
+  @IsOptional()
+  protection?: PermissionProtectionEnum;
 
   @IsString()
   @IsUUID()

@@ -53,8 +53,8 @@ export class AppConfigService {
     return {
       enable: this.getBoolean('SEED_ON_STARTUP') || false,
       ownerEmail: this.getString('OWNER_EMAIL'),
-      ownerPhone: this.getString('OWNER_PHONE'),
-      ownerNAme: this.getString('OWNER_NAME'),
+      ownerFirstName: this.getString('OWNER_FIRSTNAME'),
+      ownerLastName: this.getString('OWNER_LASTNAME'),
       ownerPassword: this.getString('OWNER_PASSWORD'),
     };
   }

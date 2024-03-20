@@ -1,4 +1,4 @@
-import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString, MinLength } from 'class-validator';
 import { RoleProtectionEnum } from '../enums/role-protection.enum';
 
 export class CreateRoleDto {
@@ -6,11 +6,11 @@ export class CreateRoleDto {
   name: string;
 
   @IsString()
-  @IsEnum(RoleProtectionEnum)
   @IsOptional()
   protection?: RoleProtectionEnum;
 
   @IsArray()
+  @MinLength(1)
   @IsOptional()
   permissions?: string[];
 }

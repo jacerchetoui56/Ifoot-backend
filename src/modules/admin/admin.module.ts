@@ -3,7 +3,7 @@ import AdminService from './services/admin.service';
 
 @Module({
   providers: [AdminService],
-  exports: [],
+  exports: [AdminService],
   controllers: [],
   imports: [],
 })

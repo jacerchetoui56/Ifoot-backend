@@ -3,7 +3,7 @@ import PermissionService from './services/permission.service';
 
 @Module({
   providers: [PermissionService],
-  exports: [],
+  exports: [PermissionService],
   controllers: [],
   imports: [],
 })

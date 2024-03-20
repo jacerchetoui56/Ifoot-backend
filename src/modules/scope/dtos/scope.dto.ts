@@ -4,7 +4,7 @@ export class ScopeDto {
   id: string;
   name: string;
   description: string;
-  code: ScopeCodeEnum;
+  code: ScopeCodeEnum | string;
   createdAt: Date;
   updatedAt: Date;
 }

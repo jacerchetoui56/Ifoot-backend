@@ -3,7 +3,7 @@ import TrainerService from './services/trainer.service';
 
 @Module({
   providers: [TrainerService],
-  exports: [],
+  exports: [TrainerService],
   controllers: [],
   imports: [],
 })

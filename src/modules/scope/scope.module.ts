@@ -3,7 +3,7 @@ import ScopeService from './services/scope.service';
 
 @Module({
   providers: [ScopeService],
-  exports: [],
+  exports: [ScopeService],
   controllers: [],
   imports: [],
 })

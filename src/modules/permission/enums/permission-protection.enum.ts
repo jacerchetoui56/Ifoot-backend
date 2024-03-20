@@ -1,5 +1,3 @@
-export enum PermissionProtectionEnum {
-  NORMAL = 'NORMAL',
-  PROTECTED = 'PROTECTED',
-  SYSTEM = 'SYSTEM',
-}
+import { $Enums } from '@prisma/client';
+
+export type PermissionProtectionEnum = $Enums.ProtectionEnum;

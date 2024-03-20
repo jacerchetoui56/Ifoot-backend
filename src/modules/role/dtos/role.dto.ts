@@ -4,7 +4,8 @@ export class RoleDto {
   id: string;
   name: string;
   protection: RoleProtectionEnum;
-  permissions: string[];
+  permissions?: string[];
+  role?: RoleDto;
   createdAt: Date;
   updatedAt: Date;
 }
