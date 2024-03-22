@@ -12,8 +12,10 @@ import { AppConfigService } from 'src/common/services/app-config.service';
       validationSchema: Joi.object({
         DATABASE_URL: Joi.string().required(),
         NODE_ENV: Joi.string(),
-        JWT_SECRET: Joi.string().required(),
-        JWT_EXPIRES_IN: Joi.string().required(),
+        JWT_ACCESS_SECRET: Joi.string().required(),
+        JWT_REFRESH_SECRET: Joi.string().required(),
+        JWT_ACCESS_EXPIRES_IN: Joi.string().required(),
+        JWT_REFRESH_EXPIRES_IN: Joi.string().required(),
         BCRYPT_SALT_ROUNDS: Joi.number().required(),
         SEED_ON_STARTUP: Joi.boolean().required(),
         OWNER_EMAIL: Joi.string().email().required(),

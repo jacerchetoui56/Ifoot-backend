@@ -31,6 +31,10 @@ export default class UserService {
       },
     });
 
+    if (!user) {
+      return null;
+    }
+
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (user && passwordMatch) {

@@ -5,10 +5,9 @@ import {
   IsOptional,
   IsPhoneNumber,
   IsString,
-  IsUUID,
 } from 'class-validator';
 
-export class CreateAdminDto {
+export class CreatePlayerDto {
   @IsEmail()
   email: string;
 
@@ -16,11 +15,6 @@ export class CreateAdminDto {
   @IsNotEmpty()
   @IsOptional()
   password: string = 'password';
-
-  @IsString()
-  @IsUUID()
-  @IsNotEmpty()
-  roleId: string;
 
   @IsString()
   @IsNotEmpty()
@@ -47,7 +41,7 @@ export class CreateAdminDto {
   @IsOptional()
   birthdate?: Date;
 
-  constructor(partial: Partial<CreateAdminDto>) {
+  constructor(partial: Partial<CreatePlayerDto>) {
     Object.assign(this, partial);
   }
 }

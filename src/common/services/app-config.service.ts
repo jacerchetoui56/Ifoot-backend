@@ -62,8 +62,12 @@ export class AppConfigService {
   get authConfig() {
     return {
       bcryptSaltRounds: this.getNumber('BCRYPT_SALT_ROUNDS') || 10,
-      jwtSecret: this.getString('JWT_SECRET') || 'SuperDuperSecret111$',
-      jwtExpiresIn: this.getString('JWT_EXPIRES_IN') || '60d',
+      jwtAccessSecret:
+        this.getString('JWT_ACCESS_SECRET') || 'SuperDuperSecret111$',
+      jwtAccessExpiresIn: this.getString('JWT_ACCESS_EXPIRES_IN') || '60d',
+      jwtRefreshSecret:
+        this.getString('JWT_REFRESH_SECRET') || 'SuperDuperSecret111$',
+      jwtRefreshExpiresIn: this.getString('JWT_REFRESH_EXPIRES_IN') || '60d',
     };
   }
 

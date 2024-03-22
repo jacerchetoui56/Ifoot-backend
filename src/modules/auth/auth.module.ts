@@ -7,6 +7,7 @@ import { UserModule } from '../user/user.module';
 import AuthController from './controllers/auth.controller';
 import AuthService from './services/auth.service';
 import { RoleModule } from '../role/role.module';
+import RoleController from './controllers/role.controller';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { RoleModule } from '../role/role.module';
       global: true,
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, RoleController],
   providers: [AuthService],
 })
 export default class AuthModule {}

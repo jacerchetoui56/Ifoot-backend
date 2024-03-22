@@ -9,4 +9,12 @@ export default class TrainerService {
   async findOneByUserId(userId: string): Promise<TrainerDto> {
     return this.prisma.trainer.findFirst({ where: { userId } });
   }
+
+  async findOneById(profileId: string): Promise<TrainerDto> {
+    return this.prisma.trainer.findFirst({ where: { id: profileId } });
+  }
+
+  async findOneByEmail(email: string): Promise<TrainerDto> {
+    return this.prisma.trainer.findFirst({ where: { user: { email } } });
+  }
 }

@@ -78,7 +78,7 @@ model Player {
   address         String?
   city            String?
   birthdate       DateTime?
-  user            User               @relation(fields: [userId], references: [id])
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String             @unique
   team            Team               @relation(fields: [teamId], references: [id])
   teamId          String
@@ -99,7 +99,7 @@ model Admin {
   address   String?
   city      String?
   birthdate DateTime?
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String    @unique
   teams     Team[]
   createdAt DateTime  @default(now())
@@ -114,7 +114,7 @@ model Trainer {
   address             String?
   city                String?
   birthdate           DateTime?
-  user                User                 @relation(fields: [userId], references: [id])
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId              String               @unique
   team                Team                 @relation(fields: [teamId], references: [id])
   teamId              String

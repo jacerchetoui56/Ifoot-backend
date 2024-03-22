@@ -11,7 +11,7 @@ export const ROLES_SEED = (permissions: PermissionDto[]): SeedRoleDto[] => [
   {
     name: 'Admin',
     permissions: permissions
-      .filter((p) => p.protection !== 'PROTECTED')
+      .filter((p) => p.protection !== 'SYSTEM')
       .map((permission) => permission.id),
     protection: 'SYSTEM',
   },

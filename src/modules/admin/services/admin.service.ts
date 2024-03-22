@@ -32,6 +32,7 @@ export default class AdminService {
       data: {
         email: email,
         password: hashedPassword,
+        roleId,
       },
     });
     const adminProfile = await this.prisma.admin.create({
@@ -48,6 +49,11 @@ export default class AdminService {
   async findOneByEmail(email: string): Promise<AdminDto> {
     return this.prisma.admin.findFirst({ where: { user: { email } } });
   }
+
+  async findOneById(id: string): Promise<AdminDto> {
+    return this.prisma.admin.findFirst({ where: { id } });
+  }
+
   async updateSystemOneById(updateAdminDto: UpdateAdminDto): Promise<AdminDto> {
     const { id, ...updateData } = updateAdminDto;
 
