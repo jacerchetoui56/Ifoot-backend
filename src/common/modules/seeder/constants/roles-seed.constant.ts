@@ -5,14 +5,31 @@ import { SeedRoleDto } from '../dtos/seed-role.dto';
 export const ROLES_SEED = (permissions: PermissionDto[]): SeedRoleDto[] => [
   {
     name: 'Super Admin',
-    permissions: permissions.map((permission) => permission.id),
+    permissions: [
+      ...permissions
+        .filter(
+          (p) =>
+            p.code !== PermissionCodeEnum.PLAYER_ACCESS &&
+            p.code !== PermissionCodeEnum.TRAINER_ACCESS,
+        )
+        .map((permission) => permission.id),
+      permissions.find((p) => p.code === PermissionCodeEnum.ADMIN_ACCESS).id,
+    ],
     protection: 'SYSTEM',
   },
   {
     name: 'Admin',
-    permissions: permissions
-      .filter((p) => p.protection !== 'SYSTEM')
-      .map((permission) => permission.id),
+    permissions: [
+      ...permissions
+        .filter(
+          (p) =>
+            p.protection !== 'SYSTEM' &&
+            p.code !== PermissionCodeEnum.PLAYER_ACCESS &&
+            p.code !== PermissionCodeEnum.TRAINER_ACCESS,
+        )
+        .map((permission) => permission.id),
+      permissions.find((p) => p.code === PermissionCodeEnum.ADMIN_ACCESS).id,
+    ],
     protection: 'SYSTEM',
   },
   {
@@ -24,6 +41,7 @@ export const ROLES_SEED = (permissions: PermissionDto[]): SeedRoleDto[] => [
             PermissionCodeEnum.GET_TEAM,
             PermissionCodeEnum.GET_CATEGORY,
             PermissionCodeEnum.GET_PRESENCE,
+            PermissionCodeEnum.PLAYER_ACCESS,
           ].find((code) => code === p.code) !== undefined,
       )
       .map((permission) => permission.id),
@@ -47,6 +65,7 @@ export const ROLES_SEED = (permissions: PermissionDto[]): SeedRoleDto[] => [
             PermissionCodeEnum.GET_TRAINER,
             PermissionCodeEnum.GET_TEAM,
             PermissionCodeEnum.GET_CATEGORY,
+            PermissionCodeEnum.TRAINER_ACCESS,
           ].find((code) => code === p.code) !== undefined,
       )
       .map((permission) => permission.id),

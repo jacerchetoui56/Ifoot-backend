@@ -44,15 +44,16 @@ export default class PlayerService {
 
     console.log('player user', playerUser);
 
-    // const playerProfile = await this.prisma.player.create({
-    //   data: {
-    //     firstName: createPlayerDto.firstName,
-    //     lastName: createPlayerDto.lastName,
-    //     userId: playerUser.id,
-    //   },
-    // });
+    const playerProfile = await this.prisma.player.create({
+      data: {
+        firstName: createPlayerDto.firstName,
+        lastName: createPlayerDto.lastName,
+        userId: playerUser.id,
+        teamId: createPlayerDto.teamId,
+        categoryId: createPlayerDto.categoryId,
+      },
+    });
 
-    // return playerProfile;
-    return playerUser;
+    return playerProfile;
   }
 }

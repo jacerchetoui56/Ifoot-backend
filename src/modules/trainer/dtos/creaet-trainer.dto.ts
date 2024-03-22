@@ -8,7 +8,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
-export class CreatePlayerDto {
+export class CreateTrainerDto {
   @IsEmail()
   email: string;
 
@@ -46,16 +46,7 @@ export class CreatePlayerDto {
   @IsUUID()
   teamId: string;
 
-  @IsString()
-  @IsUUID()
-  categoryId: string;
-
-  @IsString()
-  @IsUUID()
-  @IsOptional()
-  groupCategory?: string;
-
-  constructor(partial: Partial<CreatePlayerDto>) {
+  constructor(partial: Partial<CreateTrainerDto>) {
     Object.assign(this, partial);
   }
 }

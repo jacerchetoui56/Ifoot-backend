@@ -1,19 +1,21 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AppConfigService } from 'src/common/services/app-config.service';
-import AdminService from 'src/modules/admin/services/admin.service';
-import PlayerService from 'src/modules/player/services/player.service';
-import RoleService from 'src/modules/role/services/role.service';
-import TrainerService from 'src/modules/trainer/services/trainer.service';
-import UserService from 'src/modules/user/services/user.service';
-import { AuthDto } from '../dtos/auth.dto';
 import { AdminLoggedInDto } from 'src/modules/admin/dtos/admin-loggedin.dto';
-import { JwtPayloadDto } from '../dtos/jwt-payload.dto';
-import { TrainerLoggedInDto } from 'src/modules/trainer/dtos/trainer-loggedin.dto';
-import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 import { CreateAdminDto } from 'src/modules/admin/dtos/create-admin.dto';
+import AdminService from 'src/modules/admin/services/admin.service';
 import { CreatePlayerDto } from 'src/modules/player/dtos/create-player.dto';
 import { PlayerLoggedInDto } from 'src/modules/player/dtos/player-loggedin.dto';
+import PlayerService from 'src/modules/player/services/player.service';
+import RoleService from 'src/modules/role/services/role.service';
+import { TrainerLoggedInDto } from 'src/modules/trainer/dtos/trainer-loggedin.dto';
+import TrainerService from 'src/modules/trainer/services/trainer.service';
+import { UserDto } from 'src/modules/user/dtos/user.dto';
+import UserService from 'src/modules/user/services/user.service';
+import { AuthDto } from '../dtos/auth.dto';
+import { JwtPayloadDto } from '../dtos/jwt-payload.dto';
+import { RefreshTokenDto } from '../dtos/refresh-token.dto';
+import { CreateTrainerDto } from 'src/modules/trainer/dtos/creaet-trainer.dto';
 
 @Injectable()
 export default class AuthService {
@@ -51,14 +53,15 @@ export default class AuthService {
 
     return {
       user: {
-        id: user.id,
+        userId: user.id,
         email: user.email,
         roleId: user.roleId,
-        profile: {
-          id: admin.id,
-          ...admin,
-        },
         permissions: permissions.map((p) => p.code),
+        profileId: admin.id,
+      },
+      profile: {
+        profileId: admin.id,
+        ...admin,
       },
       access_token: this.jwtService.sign(payload, {
         secret: this.appConfigService.authConfig.jwtAccessSecret,
@@ -95,14 +98,15 @@ export default class AuthService {
 
     return {
       user: {
-        id: user.id,
+        userId: user.id,
         email: user.email,
         roleId: user.roleId,
-        profile: {
-          id: trainer.id,
-          ...trainer,
-        },
+        profileId: trainer.id,
         permissions: permissions.map((p) => p.code),
+      },
+      profile: {
+        profileId: trainer.id,
+        ...trainer,
       },
       access_token: this.jwtService.sign(payload, {
         secret: this.appConfigService.authConfig.jwtAccessSecret,
@@ -130,18 +134,24 @@ export default class AuthService {
     );
 
     const name = `${player.firstName} ${player.lastName}`;
-    const payload = { name, userId: user.id, profileId: player.id };
+    const payload = {
+      name,
+      userId: user.id,
+      profileId: player.id,
+      roleId: user.roleId,
+    };
 
     return {
       user: {
-        id: user.id,
+        userId: user.id,
+        profileId: player.id,
         email: user.email,
         roleId: user.roleId,
-        profile: {
-          id: player.id,
-          ...player,
-        },
         permissions: permissions.map((p) => p.code),
+      },
+      profile: {
+        profileId: player.id,
+        ...player,
       },
       access_token: this.jwtService.sign(payload, {
         secret: this.appConfigService.authConfig.jwtAccessSecret,
@@ -154,7 +164,7 @@ export default class AuthService {
     };
   }
 
-  async adminRefreshAccessToken({ refresh_token }: RefreshTokenDto) {
+  async refresh({ refresh_token }: RefreshTokenDto) {
     let payload: JwtPayloadDto;
 
     try {
@@ -165,78 +175,14 @@ export default class AuthService {
       throw new UnauthorizedException('Invalid token');
     }
 
-    const admin = await this.adminService.findOneById(payload.profileId);
+    const user = await this.userService.findOneById(payload.userId);
 
-    if (!admin) {
+    if (!user) {
       throw new UnauthorizedException();
     }
 
     const newPayload = {
-      name: `${admin.firstName} ${admin.lastName}`,
-      userId: payload.userId,
-      profileId: payload.profileId,
-      roleId: payload.roleId,
-    };
-
-    return {
-      access_token: this.jwtService.sign(newPayload, {
-        secret: this.appConfigService.authConfig.jwtAccessSecret,
-        expiresIn: this.appConfigService.authConfig.jwtAccessExpiresIn,
-      }),
-      refresh_token,
-    };
-  }
-  async playerRefreshAccessToken({ refresh_token }: RefreshTokenDto) {
-    let payload: JwtPayloadDto;
-
-    try {
-      payload = this.jwtService.verify(refresh_token, {
-        secret: this.appConfigService.authConfig.jwtRefreshSecret,
-      });
-    } catch (error) {
-      throw new UnauthorizedException('Invalid token');
-    }
-
-    const player = await this.playerService.findOneById(payload.profileId);
-
-    if (!player) {
-      throw new UnauthorizedException();
-    }
-
-    const newPayload = {
-      name: `${player.firstName} ${player.lastName}`,
-      userId: payload.userId,
-      profileId: payload.profileId,
-      roleId: payload.roleId,
-    };
-
-    return {
-      access_token: this.jwtService.sign(newPayload, {
-        secret: this.appConfigService.authConfig.jwtAccessSecret,
-        expiresIn: this.appConfigService.authConfig.jwtAccessExpiresIn,
-      }),
-      refresh_token,
-    };
-  }
-  async trainerRefreshAccessToken({ refresh_token }: RefreshTokenDto) {
-    let payload: JwtPayloadDto;
-
-    try {
-      payload = this.jwtService.verify(refresh_token, {
-        secret: this.appConfigService.authConfig.jwtRefreshSecret,
-      });
-    } catch (error) {
-      throw new UnauthorizedException('Invalid token');
-    }
-
-    const trainer = await this.trainerService.findOneById(payload.profileId);
-
-    if (!trainer) {
-      throw new UnauthorizedException();
-    }
-
-    const newPayload = {
-      name: `${trainer.firstName} ${trainer.lastName}`,
+      name: payload.name,
       userId: payload.userId,
       profileId: payload.profileId,
       roleId: payload.roleId,
@@ -259,13 +205,18 @@ export default class AuthService {
     return this.playerService.create(createPlayerDto);
   }
 
-  // async createAdmin(createAdminDto: CreateAdminDto) {
-  // const user = await this.userService.create(createAdminDto);
-  // const admin = await this.adminService.createSystem(createAdminDto);
+  async createTrainer(createTrainerDto: CreateTrainerDto) {
+    return this.trainerService.create(createTrainerDto);
+  }
 
-  // return {
-  //   user,
-  //   profile: admin,
-  // };
-  // }
+  async getCurrent(user: UserDto) {
+    const permissions = await this.roleService.getPermissionsOfRole(
+      user.roleId,
+    );
+
+    return {
+      ...user,
+      permissions: permissions.map((p) => p.code),
+    };
+  }
 }

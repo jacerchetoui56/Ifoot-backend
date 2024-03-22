@@ -1,16 +1,17 @@
 export class AdminLoggedInDto {
   user: {
-    id: string;
+    userId: string;
     email: string;
     roleId: string;
-    profile: {
-      id: string;
-      firstName: string;
-      lastName: string;
-      phone?: string;
-      userId: string;
-    };
+    profileId: string;
     permissions: string[];
+  };
+  profile: {
+    profileId: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    userId: string;
   };
   access_token: string;
   refresh_token: string;

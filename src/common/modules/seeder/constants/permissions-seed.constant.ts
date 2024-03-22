@@ -170,6 +170,30 @@ export const PERMISSIONS_SEED = (scopes: ScopeDto[]): SeedPermissionDto[] => [
     code: PermissionCodeEnum.DELETE_ROLE,
     description: 'This permission allow user delete non protected roles',
   },
+  {
+    scopeId: scopes.find(
+      (scope) => scope.code === ScopeCodeEnum.ROLES_MANAGEMENT,
+    )?.id,
+    name: 'Access Admin Page',
+    code: PermissionCodeEnum.ADMIN_ACCESS,
+    description: 'This permission allow user to access admin page',
+  },
+  {
+    scopeId: scopes.find(
+      (scope) => scope.code === ScopeCodeEnum.ROLES_MANAGEMENT,
+    )?.id,
+    name: 'Access Player Page',
+    code: PermissionCodeEnum.PLAYER_ACCESS,
+    description: 'This permission allow user to access player page',
+  },
+  {
+    scopeId: scopes.find(
+      (scope) => scope.code === ScopeCodeEnum.ROLES_MANAGEMENT,
+    )?.id,
+    name: 'Access Trainer Page',
+    code: PermissionCodeEnum.TRAINER_ACCESS,
+    description: 'This permission allow user to access trainer page',
+  },
 
   // -------------------------- permissions
   {
